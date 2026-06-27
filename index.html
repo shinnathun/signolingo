@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LearnFlow — Sign in</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.10.0/tabler-icons.min.css" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:           #f4f3f0;
+      --surface-0:    #e9e8e4;
+      --surface-1:    #f4f3f0;
+      --surface-2:    #ffffff;
+      --text-primary: #1a1a18;
+      --text-secondary: #4a4a46;
+      --text-muted:   #8a8a84;
+      --border:       rgba(0,0,0,0.08);
+      --border-strong: rgba(0,0,0,0.14);
+      --radius:       8px;
+
+      /* accent – blue */
+      --fill-accent:       #2563eb;
+      --fill-accent-hover: #1d4ed8;
+      --bg-accent:         #eff6ff;
+      --border-accent:     #93c5fd;
+      --text-accent:       #1d4ed8;
+      --on-accent:         #ffffff;
+
+      /* success */
+      --bg-success:     #f0fdf4;
+      --border-success: #86efac;
+      --text-success:   #16a34a;
+      --fill-success:   #22c55e;
+
+      /* danger */
+      --bg-danger:     #fef2f2;
+      --border-danger: #fca5a5;
+      --text-danger:   #dc2626;
+      --fill-danger:   #ef4444;
+
+      /* warning */
+      --bg-warning:     #fffbeb;
+      --border-warning: #fcd34d;
+      --text-warning:   #d97706;
+      --fill-warning:   #f59e0b;
+
+      /* pro / purple */
+      --bg-pro:   #f5f3ff;
+      --text-pro: #7c3aed;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg:           #18181a;
+        --surface-0:    #1f1f22;
+        --surface-1:    #27272b;
+        --surface-2:    #2f2f34;
+        --text-primary: #f0f0ec;
+        --text-secondary: #b0b0a8;
+        --text-muted:   #6a6a64;
+        --border:       rgba(255,255,255,0.08);
+        --border-strong: rgba(255,255,255,0.14);
+
+        --fill-accent:       #3b82f6;
+        --fill-accent-hover: #2563eb;
+        --bg-accent:         #1e3a5f;
+        --border-accent:     #1d4ed8;
+        --text-accent:       #93c5fd;
+
+        --bg-success:     #052e16;
+        --border-success: #166534;
+        --text-success:   #4ade80;
+
+        --bg-danger:     #450a0a;
+        --border-danger: #991b1b;
+        --text-danger:   #f87171;
+
+        --bg-warning:     #451a03;
+        --border-warning: #92400e;
+        --text-warning:   #fbbf24;
+
+        --bg-pro:   #2e1065;
+        --text-pro: #c4b5fd;
+      }
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text-primary);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 1rem;
+    }
+
+    /* ── Screens ── */
+    .screen { display: none; width: 100%; }
+    .screen.active { display: flex; align-items: center; justify-content: center; min-height: 80vh; }
+
+    /* ── Card ── */
+    .card {
+      background: var(--surface-2);
+      border: 0.5px solid var(--border-strong);
+      border-radius: 16px;
+      padding: 2.5rem 2rem;
+      width: 100%;
+      max-width: 400px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    }
+
+    .brand-mark {
+      width: 42px; height: 42px; border-radius: 10px;
+      background: var(--bg-accent);
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 1.25rem;
+    }
+    .brand-mark i { font-size: 22px; color: var(--text-accent); }
+
+    h1 { font-size: 20px; font-weight: 600; margin-bottom: 4px; }
+    .sub { font-size: 14px; color: var(--text-muted); margin-bottom: 1.75rem; }
+
+    /* ── Fields ── */
+    .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+    .field { margin-bottom: 1rem; }
+    .field label {
+      display: block; font-size: 13px; font-weight: 500;
+      color: var(--text-secondary); margin-bottom: 5px;
+    }
+    .input-wrap { position: relative; }
+    .input-wrap input {
+      width: 100%; height: 40px; padding: 0 36px 0 12px;
+      border: 0.5px solid var(--border-strong);
+      border-radius: var(--radius);
+      background: var(--surface-1);
+      color: var(--text-primary);
+      font-size: 14px; outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .input-wrap input:focus {
+      border-color: var(--border-accent);
+      box-shadow: 0 0 0 3px var(--bg-accent);
+    }
+    .input-wrap input.valid  { border-color: var(--border-success); }
+    .input-wrap input.invalid { border-color: var(--border-danger); }
+
+    .status-icon {
+      position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
+      font-size: 15px; pointer-events: none; opacity: 0; transition: opacity 0.15s;
+    }
+    .status-icon.show { opacity: 1; }
+    .status-icon.ok  { color: var(--text-success); }
+    .status-icon.bad { color: var(--text-danger); }
+
+    .hint { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+    .hint.err { color: var(--text-danger); }
+
+    /* ── Password strength ── */
+    .pw-strength { display: flex; gap: 4px; margin-top: 6px; }
+    .pw-seg { height: 3px; flex: 1; border-radius: 99px; background: var(--surface-0); transition: background 0.25s; }
+
+    /* ── Goal buttons ── */
+    .goal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 1rem; }
+    .goal-btn {
+      border: 0.5px solid var(--border-strong);
+      border-radius: var(--radius);
+      padding: 10px;
+      background: var(--surface-1);
+      cursor: pointer; text-align: left;
+      transition: border-color 0.15s, background 0.15s;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .goal-btn i   { font-size: 17px; color: var(--text-muted); flex-shrink: 0; }
+    .goal-btn span { font-size: 13px; color: var(--text-secondary); }
+    .goal-btn.selected { border-color: var(--border-accent); background: var(--bg-accent); }
+    .goal-btn.selected i,
+    .goal-btn.selected span { color: var(--text-accent); }
+
+    /* ── Terms ── */
+    .terms-row { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 1rem; }
+    .terms-row input[type=checkbox] { margin-top: 2px; cursor: pointer; }
+    .terms-row label { font-size: 12.5px; color: var(--text-secondary); line-height: 1.5; cursor: pointer; }
+    .terms-row label a { color: var(--text-accent); text-decoration: none; }
+
+    /* ── Buttons ── */
+    .btn-primary {
+      width: 100%; height: 40px;
+      background: var(--fill-accent); color: var(--on-accent);
+      border: none; border-radius: var(--radius);
+      font-size: 14px; font-weight: 500; cursor: pointer;
+      transition: background 0.15s, transform 0.1s;
+    }
+    .btn-primary:hover   { background: var(--fill-accent-hover); }
+    .btn-primary:active  { transform: scale(0.98); }
+    .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+    .btn-ghost {
+      background: none; border: 0.5px solid var(--border-strong);
+      border-radius: var(--radius); padding: 8px 18px;
+      font-size: 13px; color: var(--text-secondary); cursor: pointer;
+    }
+    .btn-ghost:hover { background: var(--surface-1); }
+
+    /* ── Misc ── */
+    .divider {
+      text-align: center; font-size: 12px; color: var(--text-muted);
+      margin: 1rem 0; position: relative;
+    }
+    .divider::before, .divider::after {
+      content: ''; position: absolute; top: 50%; width: 42%; height: 0.5px;
+      background: var(--border-strong);
+    }
+    .divider::before { left: 0; } .divider::after { right: 0; }
+
+    .info-box {
+      background: var(--bg-accent);
+      border: 0.5px solid var(--border-accent);
+      border-radius: var(--radius);
+      padding: 10px 12px;
+      font-size: 12.5px; color: var(--text-accent);
+      display: flex; gap: 8px; align-items: flex-start; margin-top: 1rem;
+    }
+    .info-box i { margin-top: 1px; flex-shrink: 0; }
+
+    .footer-note { text-align: center; font-size: 13px; color: var(--text-muted); margin-top: 1rem; }
+    .footer-note a { color: var(--text-accent); text-decoration: none; cursor: pointer; }
+    .footer-note a:hover { text-decoration: underline; }
+
+    /* ── Error banner ── */
+    .error-msg { font-size: 13px; color: var(--text-danger); margin-top: 4px; display: none; }
+    .error-msg.show { display: block; }
+
+    /* ── Success screen ── */
+    #successView { display: none; text-align: center; }
+    #successView.show { display: block; }
+    .tick-circle {
+      width: 62px; height: 62px; border-radius: 50%;
+      background: var(--bg-success);
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 1.25rem;
+    }
+    .tick-circle i { font-size: 30px; color: var(--text-success); }
+    #successView h2 { font-size: 19px; font-weight: 600; margin-bottom: 6px; }
+    #successView p  { font-size: 14px; color: var(--text-muted); margin-bottom: 1.5rem; }
+
+    /* ── Dashboard ── */
+    #dashScreen .inner {
+      max-width: 660px; width: 100%;
+      padding: 1.5rem 1rem 2.5rem;
+    }
+
+    .top-bar {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 1.75rem;
+    }
+    .user-pill { display: flex; align-items: center; gap: 10px; }
+    .avatar {
+      width: 38px; height: 38px; border-radius: 50%;
+      background: var(--bg-pro); color: var(--text-pro);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; font-weight: 600;
+    }
+    .user-name  { font-size: 15px; font-weight: 600; }
+    .user-level { font-size: 12px; color: var(--text-muted); }
+
+    .streak-banner {
+      background: var(--surface-2);
+      border: 0.5px solid var(--border-strong);
+      border-radius: 12px; padding: 1.25rem 1.5rem;
+      display: flex; align-items: center; gap: 16px;
+      margin-bottom: 1.25rem;
+    }
+    .streak-flame {
+      width: 52px; height: 52px; border-radius: 12px;
+      background: var(--bg-warning);
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .streak-flame i { font-size: 26px; color: var(--text-warning); }
+    .streak-count { font-size: 28px; font-weight: 600; line-height: 1; }
+    .streak-label { font-size: 13px; color: var(--text-muted); margin-top: 3px; }
+    .streak-dots { display: flex; gap: 6px; margin-top: 10px; flex-wrap: wrap; }
+    .dot {
+      width: 28px; height: 28px; border-radius: 50%;
+      border: 0.5px solid var(--border-strong);
+      background: var(--surface-0);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 500; color: var(--text-muted);
+    }
+    .dot.done  { background: var(--bg-warning); border-color: var(--border-warning); color: var(--text-warning); }
+    .dot.today { background: var(--fill-warning); border-color: var(--fill-warning); color: #fff; }
+
+    .stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 1.25rem; }
+    .stat-card {
+      background: var(--surface-2);
+      border: 0.5px solid var(--border-strong);
+      border-radius: 12px; padding: 1rem;
+    }
+    .stat-icon  { font-size: 18px; color: var(--text-muted); margin-bottom: 8px; }
+    .stat-val   { font-size: 22px; font-weight: 600; }
+    .stat-lbl   { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+
+    .section-title {
+      font-size: 11px; font-weight: 600; text-transform: uppercase;
+      letter-spacing: 0.07em; color: var(--text-muted); margin-bottom: 10px;
+    }
+    .lesson-list { display: flex; flex-direction: column; gap: 8px; }
+    .lesson-row {
+      background: var(--surface-2);
+      border: 0.5px solid var(--border-strong);
+      border-radius: 10px; padding: 12px 14px;
+      display: flex; align-items: center; gap: 12px;
+    }
+    .lesson-icon {
+      width: 36px; height: 36px; border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; font-size: 16px;
+    }
+    .lesson-name { font-size: 14px; font-weight: 500; }
+    .lesson-meta { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+    .lesson-badge {
+      margin-left: auto; font-size: 11px; font-weight: 500;
+      padding: 3px 9px; border-radius: 20px; flex-shrink: 0;
+    }
+    .badge-done { background: var(--bg-success); color: var(--text-success); }
+    .badge-prog { background: var(--bg-accent);  color: var(--text-accent); }
+    .badge-lock { background: var(--surface-0);  color: var(--text-muted); border: 0.5px solid var(--border-strong); }
+
+    .xp-bar-wrap { margin-top: 1.5rem; }
+    .xp-top { display: flex; justify-content: space-between; font-size: 13px; color: var(--text-muted); margin-bottom: 6px; }
+    .xp-track { height: 8px; background: var(--surface-0); border-radius: 99px; overflow: hidden; }
+    .xp-fill  { height: 100%; background: var(--fill-accent); border-radius: 99px; transition: width 1s ease; width: 0; }
+
+    @media (max-width: 480px) {
+      .card { padding: 1.75rem 1.25rem; }
+      .row-2 { grid-template-columns: 1fr; }
+      .stats-row { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ════════════════ LOGIN ════════════════ -->
+  <div id="loginScreen" class="screen active">
+    <div class="card">
+      <div class="brand-mark"><i class="ti ti-bolt"></i></div>
+      <h1>Welcome back</h1>
+      <p class="sub">Sign in to continue your learning streak</p>
+
+      <div class="field">
+        <label for="lemail">Email</label>
+        <div class="input-wrap">
+          <input type="email" id="lemail" placeholder="you@example.com" autocomplete="email"
+                 onkeydown="if(event.key==='Enter')document.getElementById('lpw').focus()" />
+        </div>
+      </div>
+      <div class="field">
+        <label for="lpw">Password</label>
+        <div class="input-wrap">
+          <input type="password" id="lpw" placeholder="••••••••"
+                 onkeydown="if(event.key==='Enter')handleLogin()" />
+        </div>
+        <div class="error-msg" id="loginErr">
+          <i class="ti ti-alert-circle"></i> Incorrect email or password.
+        </div>
+      </div>
+
+      <button class="btn-primary" onclick="handleLogin()">Sign in</button>
+
+      <p class="footer-note" style="margin-top:1.25rem">
+        No account yet? <a onclick="show('signupScreen')">Create one →</a>
+      </p>
+    </div>
+  </div>
+
+  <!-- ════════════════ SIGN UP ════════════════ -->
+  <div id="signupScreen" class="screen">
+    <div class="card">
+      <!-- Form view -->
+      <div id="signupForm">
+        <div class="brand-mark"><i class="ti ti-bolt"></i></div>
+        <h1>Create your account</h1>
+        <p class="sub">Start your learning streak today — it's free</p>
+
+        <div class="row-2">
+          <div class="field">
+            <label for="fname">First name</label>
+            <div class="input-wrap">
+              <input type="text" id="fname" placeholder="Alex" oninput="validateName('fname')" />
+              <i class="ti status-icon" id="fnameIcon"></i>
+            </div>
+          </div>
+          <div class="field">
+            <label for="lname">Last name</label>
+            <div class="input-wrap">
+              <input type="text" id="lname" placeholder="Johnson" oninput="validateName('lname')" />
+              <i class="ti status-icon" id="lnameIcon"></i>
+            </div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="semail">Email</label>
+          <div class="input-wrap">
+            <input type="email" id="semail" placeholder="you@example.com" oninput="validateEmail()" />
+            <i class="ti status-icon" id="semailIcon"></i>
+          </div>
+          <div class="hint err" id="emailErr" style="display:none">Enter a valid email address</div>
+        </div>
+
+        <div class="field">
+          <label for="spw">Password</label>
+          <div class="input-wrap">
+            <input type="password" id="spw" placeholder="At least 8 characters" oninput="validatePw()" />
+            <i class="ti status-icon" id="spwIcon"></i>
+          </div>
+          <div class="pw-strength">
+            <div class="pw-seg" id="seg0"></div>
+            <div class="pw-seg" id="seg1"></div>
+            <div class="pw-seg" id="seg2"></div>
+            <div class="pw-seg" id="seg3"></div>
+          </div>
+          <div class="hint" id="pwHint" style="margin-top:5px">Use 8+ characters with a mix of letters and numbers</div>
+        </div>
+
+        <div class="field">
+          <label style="display:block;font-size:13px;font-weight:500;color:var(--text-secondary);margin-bottom:8px">
+            What's your learning goal?
+          </label>
+          <div class="goal-grid">
+            <button class="goal-btn" onclick="selectGoal(this)" data-goal="career" type="button">
+              <i class="ti ti-briefcase"></i><span>Career growth</span>
+            </button>
+            <button class="goal-btn" onclick="selectGoal(this)" data-goal="hobby" type="button">
+              <i class="ti ti-heart"></i><span>Personal hobby</span>
+            </button>
+            <button class="goal-btn" onclick="selectGoal(this)" data-goal="school" type="button">
+              <i class="ti ti-school"></i><span>School / uni</span>
+            </button>
+            <button class="goal-btn" onclick="selectGoal(this)" data-goal="explore" type="button">
+              <i class="ti ti-compass"></i><span>Just exploring</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="terms-row">
+          <input type="checkbox" id="terms" onchange="checkReady()" />
+          <label for="terms">
+            I agree to the <a href="#">Terms of service</a> and <a href="#">Privacy policy</a>
+          </label>
+        </div>
+
+        <button class="btn-primary" id="submitBtn" disabled onclick="handleSignup()">Create account</button>
+
+        <p class="footer-note">Already have an account? <a onclick="show('loginScreen')">Sign in →</a></p>
+      </div>
+
+      <!-- Success view -->
+      <div id="successView">
+        <div class="tick-circle"><i class="ti ti-check"></i></div>
+        <h2>You're all set, <span id="successName">Alex</span>!</h2>
+        <p>Your account is ready. Start your first lesson and build your streak from day one.</p>
+        <button class="btn-primary" onclick="goDash()" style="margin-bottom:0.75rem">Go to dashboard →</button>
+        <br>
+        <button class="btn-ghost" style="width:100%;margin-top:0.5rem" onclick="resetSignup()">Back to sign up</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════ DASHBOARD ════════════════ -->
+  <div id="dashScreen" class="screen">
+    <div class="inner">
+
+      <div class="top-bar">
+        <div class="user-pill">
+          <div class="avatar" id="dashAvatar">AJ</div>
+          <div>
+            <div class="user-name" id="dashName">Alex Johnson</div>
+            <div class="user-level">Level 7 · Python learner</div>
+          </div>
+        </div>
+        <button class="btn-ghost" onclick="handleLogout()">
+          <i class="ti ti-logout"></i> Sign out
+        </button>
+      </div>
+
+      <!-- Streak -->
+      <div class="streak-banner">
+        <div class="streak-flame"><i class="ti ti-flame"></i></div>
+        <div style="flex:1">
+          <div style="display:flex;align-items:baseline;gap:6px">
+            <span class="streak-count">14</span>
+            <span style="font-size:14px;color:var(--text-muted)">day streak</span>
+          </div>
+          <div class="streak-label">Keep it up! Practice today to extend your streak.</div>
+          <div class="streak-dots" id="streakDots"></div>
+        </div>
+      </div>
+
+      <!-- Stats -->
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-icon"><i class="ti ti-book-2"></i></div>
+          <div class="stat-val">38</div>
+          <div class="stat-lbl">Lessons done</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon"><i class="ti ti-clock-hour-4"></i></div>
+          <div class="stat-val">12h</div>
+          <div class="stat-lbl">Time spent</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon"><i class="ti ti-trophy"></i></div>
+          <div class="stat-val">2400</div>
+          <div class="stat-lbl">XP earned</div>
+        </div>
+      </div>
+
+      <!-- XP bar -->
+      <div class="xp-bar-wrap">
+        <div class="xp-top">
+          <span>Level 7</span>
+          <span>2400 / 3000 XP to Level 8</span>
+        </div>
+        <div class="xp-track"><div class="xp-fill" id="xpFill"></div></div>
+      </div>
+
+      <!-- Lessons -->
+      <div style="margin-top:1.5rem">
+        <div class="section-title">Recent lessons</div>
+        <div class="lesson-list">
+          <div class="lesson-row">
+            <div class="lesson-icon" style="background:var(--bg-success)">
+              <i class="ti ti-check" style="color:var(--text-success)"></i>
+            </div>
+            <div>
+              <div class="lesson-name">Functions &amp; scope</div>
+              <div class="lesson-meta">Python basics · 18 min · Today</div>
+            </div>
+            <span class="lesson-badge badge-done">Done</span>
+          </div>
+          <div class="lesson-row">
+            <div class="lesson-icon" style="background:var(--bg-accent)">
+              <i class="ti ti-player-play" style="color:var(--text-accent)"></i>
+            </div>
+            <div>
+              <div class="lesson-name">Loops &amp; iteration</div>
+              <div class="lesson-meta">Python basics · 22 min · Yesterday</div>
+            </div>
+            <span class="lesson-badge badge-prog">In progress</span>
+          </div>
+          <div class="lesson-row">
+            <div class="lesson-icon" style="background:var(--bg-success)">
+              <i class="ti ti-check" style="color:var(--text-success)"></i>
+            </div>
+            <div>
+              <div class="lesson-name">Lists &amp; tuples</div>
+              <div class="lesson-meta">Python basics · 15 min · 2 days ago</div>
+            </div>
+            <span class="lesson-badge badge-done">Done</span>
+          </div>
+          <div class="lesson-row">
+            <div class="lesson-icon" style="background:var(--surface-0)">
+              <i class="ti ti-lock" style="color:var(--text-muted)"></i>
+            </div>
+            <div>
+              <div class="lesson-name">Classes &amp; objects</div>
+              <div class="lesson-meta">Python intermediate · 25 min</div>
+            </div>
+            <span class="lesson-badge badge-lock">Locked</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    /* ════════════════════════════════════════════════════════
+       CONFIGURATION
+       1. Deploy the Apps Script (see apps-script.js) as a Web App
+       2. Paste your Web App URL below
+    ════════════════════════════════════════════════════════ */
+    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwjbtYUqOzpH4inxXGBZoROkMPSl76-gT8g42Ed5VVpKm38KEIYO5U0qoiBoXr3Q7MXQQ/exec';
+
+    /* ── Screen routing ── */
+    function show(id) {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+    }
+
+    /* ── Shared API helper ── */
+    async function apiCall(payload) {
+      const res  = await fetch(APPS_SCRIPT_URL, {
+        method: 'POST',
+        body:   JSON.stringify(payload)
+      });
+      return res.json();
+    }
+
+    /* ── Login ── */
+    async function handleLogin() {
+      const email   = document.getElementById('lemail').value.trim();
+      const pw      = document.getElementById('lpw').value;
+      const err     = document.getElementById('loginErr');
+      const btn     = document.querySelector('#loginScreen .btn-primary');
+
+      if (!email || !pw) {
+        err.textContent = 'Please enter your email and password.';
+        err.classList.add('show');
+        return;
+      }
+
+      btn.disabled    = true;
+      btn.textContent = 'Signing in…';
+      err.classList.remove('show');
+
+      try {
+        const data = await apiCall({ action: 'login', email, password: pw });
+        if (data.ok) {
+          const { firstName, lastName } = data.user;
+          const fullName = firstName + ' ' + lastName;
+          const initials = (firstName[0] + lastName[0]).toUpperCase();
+          openDash(fullName, initials);
+        } else {
+          err.innerHTML = '<i class="ti ti-alert-circle"></i> ' + (data.error || 'Incorrect email or password.');
+          err.classList.add('show');
+        }
+      } catch (e) {
+        err.innerHTML = '<i class="ti ti-alert-circle"></i> Could not reach the server. Check your Apps Script URL.';
+        err.classList.add('show');
+      } finally {
+        btn.disabled    = false;
+        btn.textContent = 'Sign in';
+      }
+    }
+
+    function handleLogout() {
+      document.getElementById('lemail').value = '';
+      document.getElementById('lpw').value = '';
+      document.getElementById('loginErr').classList.remove('show');
+      document.getElementById('xpFill').style.width = '0';
+      show('loginScreen');
+    }
+
+    /* ── Dashboard ── */
+    function openDash(name, initials) {
+      document.getElementById('dashName').textContent   = name;
+      document.getElementById('dashAvatar').textContent = initials;
+      show('dashScreen');
+      buildStreakDots();
+      setTimeout(() => { document.getElementById('xpFill').style.width = '80%'; }, 200);
+    }
+
+    const WEEK = ['M','T','W','T','F','S','S'];
+    function buildStreakDots() {
+      const wrap = document.getElementById('streakDots');
+      wrap.innerHTML = '';
+      WEEK.forEach((d, i) => {
+        const el = document.createElement('div');
+        el.className = 'dot ' + (i < 6 ? 'done' : 'today');
+        el.textContent = d;
+        wrap.appendChild(el);
+      });
+    }
+
+    /* ── Sign-up validation ── */
+    let selectedGoal = null;
+
+    function validateName(id) {
+      const el   = document.getElementById(id);
+      const icon = document.getElementById(id + 'Icon');
+      const ok   = el.value.trim().length >= 2;
+      el.className = el.value ? (ok ? 'valid' : 'invalid') : '';
+      icon.className = 'ti status-icon' + (el.value ? ' show' : '') + (ok ? ' ok ti-check' : ' bad ti-x');
+      checkReady();
+    }
+
+    function validateEmail() {
+      const el   = document.getElementById('semail');
+      const icon = document.getElementById('semailIcon');
+      const err  = document.getElementById('emailErr');
+      const ok   = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(el.value);
+      el.className = el.value ? (ok ? 'valid' : 'invalid') : '';
+      icon.className = 'ti status-icon' + (el.value ? ' show' : '') + (ok ? ' ok ti-check' : ' bad ti-x');
+      err.style.display = (el.value && !ok) ? 'block' : 'none';
+      checkReady();
+    }
+
+    const strengthColors = [
+      'var(--fill-danger)',
+      'var(--fill-warning)',
+      'var(--fill-warning)',
+      'var(--fill-success)'
+    ];
+    const strengthLabels = ['Too short', 'Weak', 'Fair', 'Strong'];
+
+    function validatePw() {
+      const val  = document.getElementById('spw').value;
+      const icon = document.getElementById('spwIcon');
+      const hint = document.getElementById('pwHint');
+      let score  = 0;
+      if (val.length >= 8)          score++;
+      if (/[A-Z]/.test(val))        score++;
+      if (/[0-9]/.test(val))        score++;
+      if (/[^A-Za-z0-9]/.test(val)) score++;
+
+      for (let i = 0; i < 4; i++) {
+        document.getElementById('seg' + i).style.background =
+          i < score ? strengthColors[score - 1] : 'var(--surface-0)';
+      }
+      const ok = val.length >= 8;
+      document.getElementById('spw').className = val ? (ok ? 'valid' : 'invalid') : '';
+      icon.className = 'ti status-icon' + (val ? ' show' : '') + (ok ? ' ok ti-check' : ' bad ti-x');
+      hint.textContent = val ? strengthLabels[Math.max(score - 1, 0)] : 'Use 8+ characters with a mix of letters and numbers';
+      hint.className   = 'hint' + (val && !ok ? ' err' : '');
+      checkReady();
+    }
+
+    function selectGoal(btn) {
+      document.querySelectorAll('.goal-btn').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      selectedGoal = btn.dataset.goal;
+      checkReady();
+    }
+
+    function checkReady() {
+      const fname = document.getElementById('fname').value.trim().length >= 2;
+      const lname = document.getElementById('lname').value.trim().length >= 2;
+      const email = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(document.getElementById('semail').value);
+      const pw    = document.getElementById('spw').value.length >= 8;
+      const terms = document.getElementById('terms').checked;
+      document.getElementById('submitBtn').disabled = !(fname && lname && email && pw && selectedGoal && terms);
+    }
+
+    async function handleSignup() {
+      const firstName = document.getElementById('fname').value.trim();
+      const lastName  = document.getElementById('lname').value.trim();
+      const email     = document.getElementById('semail').value.trim();
+      const password  = document.getElementById('spw').value;
+      const goal      = selectedGoal;
+      const btn       = document.getElementById('submitBtn');
+
+      btn.disabled    = true;
+      btn.textContent = 'Creating account…';
+
+      try {
+        const data = await apiCall({ action: 'signup', firstName, lastName, email, password, goal });
+        if (data.ok) {
+          document.getElementById('successName').textContent   = firstName;
+          document.getElementById('signupForm').style.display  = 'none';
+          document.getElementById('successView').style.display = 'block';
+          window._signupUser = {
+            name:     firstName + ' ' + lastName,
+            initials: (firstName[0] + lastName[0]).toUpperCase()
+          };
+        } else {
+          const errEl = document.getElementById('emailErr');
+          errEl.textContent  = data.error || 'Sign-up failed. Please try again.';
+          errEl.style.display = 'block';
+          btn.disabled    = false;
+          btn.textContent = 'Create account';
+        }
+      } catch (e) {
+        alert('Could not reach the server. Check your Apps Script URL.');
+        btn.disabled    = false;
+        btn.textContent = 'Create account';
+      }
+    }
+
+    function goDash() {
+      const u = window._signupUser || { name: 'Alex Johnson', initials: 'AJ' };
+      openDash(u.name, u.initials);
+    }
+
+    function resetSignup() {
+      document.getElementById('signupForm').style.display  = 'block';
+      document.getElementById('successView').style.display = 'none';
+    }
+  </script>
+</body>
+</html>
